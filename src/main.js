@@ -13,6 +13,7 @@ class MainScene extends Phaser.Scene {
     preload() {
         this.load.image('bg', './src/assets/images/bg.png');
         this.load.image('player', './src/assets/images/cocktail.png');
+        this.load.spritesheet('brawler', './src/assets/images/brawler48x48.png', {frameWidth: 48, frameHeight: 48});
     }
 
     create() {
@@ -26,6 +27,8 @@ class MainScene extends Phaser.Scene {
         this.add.image(0, 600, 'bg').setOrigin(0).setFlipY(true);
         this.add.image(800, 600, 'bg').setOrigin(0).setFlipX(true).setFlipY(true);
 
+        // this.add.image(0, 0, 'brawler', '__BASE').setOrigin(0, 0);
+
         // let bg = this.add.image(0, 0, 'background');
         // bg.setOrigin(0, 0); // This sets the origin of the image to the top-left corner
         // bg.setScale(this.sys.game.config.width / bg.width, this.sys.game.config.height / bg.height); // Scale the image to cover the entire game area
@@ -33,7 +36,9 @@ class MainScene extends Phaser.Scene {
         // Add player as a rectangle
         // player = this.add.rectangle(100, 250, 60, 80, 0xcf4023) // Now player is accessible in update
         // player = this.physics.add.rectangle(100, 300, 30, 40, 0x964B00);
-        this.player = this.physics.add.image(400, 300, 'player');
+        // this.player = this.physics.add.image(400, 300, 'player');
+        this.player = this.physics.add.sprite(100, 150, 'brawler');
+
         // player.setOrigin(0.5, 0.5);
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -45,13 +50,28 @@ class MainScene extends Phaser.Scene {
         // hurtbox.setVisible(false); // Start as not visible
 
 
-
         // this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D); // Key for attacking
         //
         // this.cameras.main.setBounds(0, 0, 1600, 600);
         // this.cameras.main.startFollow(player, true, 0.1, 0.1);
         // this.cameras.main.setDeadzone(300, 600); // Horizontal deadzone of 300 pixel
 
+        this.anims.create({
+            key: 'walk',
+            frames: this.anims.generateFrameNumbers('brawler', {frames: [0, 1, 2, 3]}),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('brawler', {frames: [5, 6, 7, 8]}),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.player.setScale(3);
+        // this.player.anims.play('idle', true);
     }
 
     update() {
@@ -104,22 +124,34 @@ class MainScene extends Phaser.Scene {
         // }
         this.player.setVelocity(0);
 
-        if (this.cursors.left.isDown)
-        {
+        if (this.cursors.left.isDown) {
             this.player.setVelocityX(-500);
-        }
-        else if (this.cursors.right.isDown)
-        {
+            this.player.anims.play('walk', true);
+        } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(500);
+            this.player.anims.play('walk', true);
         }
+        // } else{
+        //     if(!this.cursors.up.isDown && !this.cursors.down.isDown) {
+        //         this.player.anims.play('idle');
+        //     }
+        // }
 
-        if (this.cursors.up.isDown)
-        {
+        if (this.cursors.up.isDown) {
             this.player.setVelocityY(-500);
-        }
-        else if (this.cursors.down.isDown)
-        {
+            this.player.anims.play('walk', true);
+        } else if (this.cursors.down.isDown) {
             this.player.setVelocityY(500);
+            this.player.anims.play('walk', true);
+        }
+            // } else{
+            //     if(!this.cursors.left.isDown && !this.cursors.right.isDown) {
+            //         this.player.anims.play('idle');
+            //     }
+        // }
+        else if (!this.cursors.up.isDown && !this.cursors.right.isDown && !this.cursors.down.isDown && !this.cursors.left.isDown) {
+            this.player.anims.play('idle', true);
+            // console.log("idle");
         }
     }
 }
