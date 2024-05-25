@@ -1,8 +1,3 @@
-// import Phaser from 'phaser';
-// let player; // Define player at a higher scope
-// let hurtbox;
-
-
 class MainScene extends Phaser.Scene {
     constructor() {
         // super({key: 'MainScene'});
@@ -13,7 +8,7 @@ class MainScene extends Phaser.Scene {
 
     preload() {
         this.load.image('bg', './src/assets/images/bg.png');
-        this.load.image('player', './src/assets/images/cocktail.png');
+        this.load.image('enemy', './src/assets/images/cocktail.png');
         this.load.spritesheet('brawler', './src/assets/images/brawler48x48.png', {frameWidth: 48, frameHeight: 48});
     }
 
@@ -57,15 +52,35 @@ class MainScene extends Phaser.Scene {
 
         this.player.setScale(3);
 
+        this.punchHitbox = this.physics.add.sprite(0, 0, 'null');
+        this.punchHitbox.body.setSize(20, 20);
+        this.punchHitbox.setVisible(false);
+
+        this.enemy = this.physics.add.sprite(400, 200, 'enemy');
+        // this.enemy.setScale(2);
+
+        this.physics.add.overlap(this.punchHitbox, this.enemy, this.handleHit, null, this);
+
         //punching
         this.punchKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
+        this.player.on(Phaser.Animations.Events.ANIMATION_UPDATE, (anim, frame) => {
+            if (anim.key === 'punch') {
+                if (frame.index >= 2 && frame.index <= 4) {
+                    // this.punchHitbox.setVisible(true);
+                    this.positionHitbox();
+                    this.punchHitbox.body.enable = true;
+                } else {
+                    // this.punchHitbox.setVisible(false);
+                    this.punchHitbox.body.enable = false;
+
+                }
+            }
+        }, this);
+
         this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (anim) => {
-            console.log("anim complete");
             if (anim.key === 'punch') {
                 this.isPunching = false;
-                console.log("Punch animation completed");
-                // this.updatePlayerAnimation(); // Update to idle or walk based on current keys
             }
         }, this);
     }
@@ -83,8 +98,6 @@ class MainScene extends Phaser.Scene {
             this.updatePlayerMovement();
             this.updatePlayerAnimation();
         }
-
-        console.log(this.player.body.velocity.y);
     }
 
     updatePlayerMovement() {
@@ -106,8 +119,6 @@ class MainScene extends Phaser.Scene {
     }
 
     updatePlayerAnimation() {
-
-
         if (!this.isPunching) {
             if (this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown) {
                 this.player.anims.play('walk', true);
@@ -116,6 +127,24 @@ class MainScene extends Phaser.Scene {
             }
         }
     }
+
+    positionHitbox() {
+        if (this.player.flipX) {
+            this.punchHitbox.setPosition(this.player.x + 50, this.player.y + 15);
+        } else {
+            this.punchHitbox.setPosition(this.player.x - 50, this.player.y + 15);
+        }
+    }
+
+    handleHit(hitbox, enemy) {
+        enemy.setTint(0xff9999);
+        // console.log("hit");
+        this.time.delayedCall(1000, () => {
+            enemy.clearTint();
+            console.log("clear");
+        }, [], this);
+    }
+
 }
 
 const config = {
