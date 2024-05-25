@@ -65,7 +65,7 @@ class MainScene extends Phaser.Scene {
             if (anim.key === 'punch') {
                 this.isPunching = false;
                 console.log("Punch animation completed");
-                this.updatePlayerAnimation(); // Update to idle or walk based on current keys
+                // this.updatePlayerAnimation(); // Update to idle or walk based on current keys
             }
         }, this);
     }
@@ -73,6 +73,7 @@ class MainScene extends Phaser.Scene {
     update() {
         //punching
         if (Phaser.Input.Keyboard.JustDown(this.punchKey) && !this.isPunching) {
+            this.player.setVelocity(0, 0);
             this.player.anims.play('punch', true);
             this.isPunching = true; // Set punching status
         }
@@ -80,7 +81,10 @@ class MainScene extends Phaser.Scene {
         //animation
         if (!this.isPunching) {
             this.updatePlayerMovement();
+            this.updatePlayerAnimation();
         }
+
+        console.log(this.player.body.velocity.y);
     }
 
     updatePlayerMovement() {
@@ -88,11 +92,9 @@ class MainScene extends Phaser.Scene {
 
         if (this.cursors.left.isDown) {
             this.player.setVelocityX(-500);
-            if (!this.isPunching) this.player.anims.play('walk', true);
             this.player.setFlipX(false);
         } else if (this.cursors.right.isDown) {
             this.player.setVelocityX(500);
-            if (!this.isPunching) this.player.anims.play('walk', true);
             this.player.setFlipX(true);
         }
 
@@ -101,6 +103,10 @@ class MainScene extends Phaser.Scene {
         } else if (this.cursors.down.isDown) {
             this.player.setVelocityY(500);
         }
+    }
+
+    updatePlayerAnimation() {
+
 
         if (!this.isPunching) {
             if (this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown) {
@@ -108,18 +114,6 @@ class MainScene extends Phaser.Scene {
             } else {
                 this.player.anims.play('idle', true);
             }
-        }
-    }
-
-    updatePlayerAnimation() {
-        if (!this.punching) {
-            return;
-        }
-
-        if (!this.cursors.up.isDown && !this.cursors.right.isDown && !this.cursors.down.isDown && !this.cursors.left.isDown && !this.isPunching) {
-            this.player.anims.play('idle', true);
-        } else {
-            this.player.anims.play('walk', true);
         }
     }
 }
