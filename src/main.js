@@ -1,3 +1,5 @@
+import Enemy from './enemy.js';
+
 class MainScene extends Phaser.Scene {
     constructor() {
         // super({key: 'MainScene'});
@@ -56,8 +58,8 @@ class MainScene extends Phaser.Scene {
         this.punchHitbox.body.setSize(20, 20);
         this.punchHitbox.setVisible(false);
 
-        this.enemy = this.physics.add.sprite(400, 200, 'enemy');
-        // this.enemy.setScale(2);
+        this.enemy = new Enemy(this, 400, 200, 'enemy');
+        // this.enemy = this.physics.add.sprite(400, 200, 'enemy');
 
         this.physics.add.overlap(this.punchHitbox, this.enemy, this.handleHit, null, this);
 
