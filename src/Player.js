@@ -1,4 +1,4 @@
-export default class Player extends Phaser.GameObjects.Sprite {
+export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture) {
         super(scene, x, y, texture);
         scene.add.existing(this);
@@ -11,12 +11,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.scene = scene;
         this.createAnimations();
 
-        // this.setCollideWorldBounds(true);
         this.setScale(3);
     }
 
     static preload(scene) {
-        scene.load.spritesheet('brawler', './src/assets/images/brawler48x48.png', {frameWidth: 48, frameHeight: 48});
+        scene.load.spritesheet('brawler', './src/assets/images/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
     }
 
     update() {
@@ -33,25 +32,27 @@ export default class Player extends Phaser.GameObjects.Sprite {
     createAnimations() {
         this.scene.anims.create({
             key: 'walk',
-            frames: this.scene.anims.generateFrameNumbers('brawler', {frames: [0, 1, 2, 3]}),
+            frames: this.scene.anims.generateFrameNumbers('brawler', { frames: [0, 1, 2, 3] }),
             frameRate: 8,
             repeat: -1
         });
 
         this.scene.anims.create({
             key: 'idle',
-            frames: this.scene.anims.generateFrameNumbers('brawler', {frames: [5, 6, 7, 8]}),
+            frames: this.scene.anims.generateFrameNumbers('brawler', { frames: [5, 6, 7, 8] }),
             frameRate: 8,
             repeat: -1,
             repeatDelay: 200
         });
+
         this.scene.anims.create({
             key: 'punch',
-            frames: this.scene.anims.generateFrameNumbers('brawler', {frames: [15, 16, 17, 18, 17, 15]}),
+            frames: this.scene.anims.generateFrameNumbers('brawler', { frames: [15, 16, 17, 18, 17, 15] }),
             frameRate: 8,
             repeat: 0
         });
     }
+
     updatePlayerMovement() {
         this.setVelocity(0, 0);
 
