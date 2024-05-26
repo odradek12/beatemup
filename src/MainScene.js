@@ -3,8 +3,8 @@ import Player from './Player.js';
 
 export default class MainScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'MainScene' });
-        this.isPunching = false;
+        super({key: 'MainScene'});
+        this.isAttacking = false;
     }
 
     preload() {
@@ -20,7 +20,7 @@ export default class MainScene extends Phaser.Scene {
         this.add.image(0, 600, 'bg').setOrigin(0).setFlipY(true);
         this.add.image(800, 600, 'bg').setOrigin(0).setFlipX(true).setFlipY(true);
 
-        this.player = new Player(this, 100, 150, 'brawler');
+        this.player = new Player(this, 100, 150);
         this.physics.add.existing(this.player);
 
         this.player.body.setCollideWorldBounds(true);
@@ -36,9 +36,10 @@ export default class MainScene extends Phaser.Scene {
         this.physics.add.overlap(this.punchHitbox, this.enemy, this.handleHit, null, this);
 
         this.punchKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        this.atk2Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
 
         this.player.on(Phaser.Animations.Events.ANIMATION_UPDATE, (anim, frame) => {
-            if (anim.key === 'punch') {
+            if (anim.key === 'attack') {
                 if (frame.index >= 2 && frame.index <= 4) {
                     this.positionHitbox();
                     this.punchHitbox.body.enable = true;
@@ -49,29 +50,34 @@ export default class MainScene extends Phaser.Scene {
         }, this);
 
         this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (anim) => {
-            if (anim.key === 'punch') {
-                this.isPunching = false;
+            if (anim.key === 'attack' || anim.key === 'attack2') {
+                this.isAttacking = false;
             }
         }, this);
     }
 
     update() {
-        if (Phaser.Input.Keyboard.JustDown(this.punchKey) && !this.isPunching) {
+        if (Phaser.Input.Keyboard.JustDown(this.punchKey) && !this.isAttacking) {
             this.player.setVelocity(0, 0);
-            this.player.anims.play('punch', true);
-            this.isPunching = true;
+            this.player.anims.play('attack', true);
+            this.isAttacking = true;
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.atk2Key) && !this.isAttacking) {
+            this.player.setVelocity(0, 0);
+            this.player.anims.play('attack2', true);
+            this.isAttacking = true;
         }
 
-        if (!this.isPunching) {
+        if (!this.isAttacking) {
             this.player.update();
         }
     }
 
     positionHitbox() {
         if (this.player.flipX) {
-            this.punchHitbox.setPosition(this.player.x + 50, this.player.y + 15);
-        } else {
             this.punchHitbox.setPosition(this.player.x - 50, this.player.y + 15);
+        } else {
+            this.punchHitbox.setPosition(this.player.x + 50, this.player.y + 15);
         }
     }
 

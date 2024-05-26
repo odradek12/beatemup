@@ -16,7 +16,7 @@ export default class Preloader extends Phaser.Scene {
         // Load all assets needed for the game
         this.load.image('bg', './src/assets/images/bg.png');
         this.load.image('enemy', './src/assets/images/cocktail.png');
-        this.load.spritesheet('brawler', './src/assets/images/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
+        this.load.atlas('knight', './src/assets/images/knight.png', './src/assets/images/knight.json');
     }
 
     create() {
