@@ -9,6 +9,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.isPunching = false;
 
         this.scene = scene;
+        this.cursors = this.scene.input.keyboard.createCursorKeys();
         this.createAnimations();
 
         this.setScale(3);
@@ -23,10 +24,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.updatePlayerMovement();
             this.updatePlayerAnimation();
         }
-    }
-
-    initControls() {
-        this.cursors = this.input.keyboard.createCursorKeys();
     }
 
     createAnimations() {

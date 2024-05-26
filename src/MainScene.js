@@ -23,31 +23,8 @@ export default class MainScene extends Phaser.Scene {
         this.player = new Player(this, 100, 150, 'brawler');
         this.physics.add.existing(this.player);
 
-        this.cursors = this.input.keyboard.createCursorKeys();
         this.player.body.setCollideWorldBounds(true);
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-
-        this.anims.create({
-            key: 'walk',
-            frames: this.anims.generateFrameNumbers('brawler', { frames: [0, 1, 2, 3] }),
-            frameRate: 8,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNumbers('brawler', { frames: [5, 6, 7, 8] }),
-            frameRate: 8,
-            repeat: -1,
-            repeatDelay: 200
-        });
-
-        this.anims.create({
-            key: 'punch',
-            frames: this.anims.generateFrameNumbers('brawler', { frames: [15, 16, 17, 18, 17, 15] }),
-            frameRate: 8,
-            repeat: 0
-        });
 
         this.punchHitbox = this.physics.add.sprite(0, 0, 'null');
         this.punchHitbox.body.setSize(20, 20);
@@ -86,36 +63,7 @@ export default class MainScene extends Phaser.Scene {
         }
 
         if (!this.isPunching) {
-            this.updatePlayerMovement();
-            this.updatePlayerAnimation();
-        }
-    }
-
-    updatePlayerMovement() {
-        this.player.setVelocity(0, 0);
-
-        if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-500);
-            this.player.setFlipX(false);
-        } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(500);
-            this.player.setFlipX(true);
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-500);
-        } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(500);
-        }
-    }
-
-    updatePlayerAnimation() {
-        if (!this.isPunching) {
-            if (this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown) {
-                this.player.anims.play('walk', true);
-            } else {
-                this.player.anims.play('idle', true);
-            }
+            this.player.update();
         }
     }
 
