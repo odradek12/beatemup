@@ -7,10 +7,6 @@ export default class MainScene extends Phaser.Scene {
         this.isAttacking = false;
     }
 
-    preload() {
-        // Preload assets are already handled in the Preloader scene
-    }
-
     create() {
         this.cameras.main.setBounds(0, 0, 800 * 2, 600 * 2);
         this.physics.world.setBounds(0, 0, 800 * 2, 600 * 2);
@@ -30,10 +26,13 @@ export default class MainScene extends Phaser.Scene {
         this.punchHitbox.body.setSize(20, 20);
         this.punchHitbox.setVisible(false);
 
-        this.enemy = new Enemy(this, 400, 200, 'enemy');
-        this.physics.add.existing(this.enemy);
+        // this.enemy = new Enemy(this, 400, 200, 'enemy');
+        // this.physics.add.existing(this.enemy);
 
-        this.physics.add.overlap(this.punchHitbox, this.enemy, this.handleHit, null, this);
+        this.enemies = this.physics.add.group();
+        this.createEnemies();
+
+        this.physics.add.overlap(this.punchHitbox, this.enemies, this.handleHit, null, this);
 
         this.punchKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.atk2Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -41,6 +40,13 @@ export default class MainScene extends Phaser.Scene {
         this.player.on(Phaser.Animations.Events.ANIMATION_UPDATE, (anim, frame) => {
             if (anim.key === 'attack') {
                 if (frame.index >= 2 && frame.index <= 4) {
+                    this.positionHitbox();
+                    this.punchHitbox.body.enable = true;
+                } else {
+                    this.punchHitbox.body.enable = false;
+                }
+            } else if (anim.key === 'attack2') {
+                if (frame.index >= 5 && frame.index <= 9) {
                     this.positionHitbox();
                     this.punchHitbox.body.enable = true;
                 } else {
@@ -71,6 +77,10 @@ export default class MainScene extends Phaser.Scene {
         if (!this.isAttacking) {
             this.player.update();
         }
+
+        this.enemies.children.iterate(enemy => {
+            enemy.update();
+        });
     }
 
     positionHitbox() {
@@ -83,9 +93,39 @@ export default class MainScene extends Phaser.Scene {
 
     handleHit(hitbox, enemy) {
         enemy.setTint(0xff9999);
-        this.time.delayedCall(1000, () => {
-            enemy.clearTint();
-            console.log("clear");
-        }, [], this);
+
+        const dir = this.player.flipX ? -1 : 1;
+        const knockbackDistance = 30;
+        const knockbackDuration = 1000;
+
+        this.tweens.add({
+            targets: enemy,
+            x: enemy.x + dir * knockbackDistance,
+            ease: 'Power1',
+            duration: knockbackDuration,
+            onComplete: () => {
+                enemy.clearTint();
+            }
+        });
+
+        // this.time.delayedCall(1000, () => {
+        //     enemy.clearTint();
+        //     console.log("clear");
+        // }, [], this);
     }
+
+    createEnemies(x, y) {
+        const enemyPositions = [
+            {x: 400, y: 200},
+            {x: 550, y: 200},
+            {x: 700, y: 200}
+        ];
+
+        enemyPositions.forEach(pos => {
+            const enemy = new Enemy(this, pos.x, pos.y, 'enemy');
+            this.enemies.add(enemy);
+        })
+    }
+
+
 }
