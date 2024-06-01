@@ -17,6 +17,10 @@ export default class Preloader extends Phaser.Scene {
         this.load.image('bg', './src/assets/images/bg.png');
         this.load.image('enemy', './src/assets/images/cocktail.png');
         this.load.atlas('knight', './src/assets/images/knight.png', './src/assets/images/knight.json');
+        this.load.spritesheet('enemy1', './src/assets/images/gorksprite.png', {
+            frameWidth: 16,
+            frameHeight: 16,
+        });
     }
 
     create() {

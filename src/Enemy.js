@@ -1,11 +1,17 @@
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture) {
-        super(scene, x, y, texture);
+        super(scene, x, y, 'enemy1');
+        // super(scene, x, y, 'enemy1');
         scene.add.existing(this);
         scene.physics.world.enable(this);
 
         this.speed = 50;
-        this.targetPosition = { x: x, y: y };
+        this.targetPosition = {x: x, y: y};
+
+        this.createAnimations();
+        this.play('enemy_idle');
+
+        this.setScale(3);
 
         this.reorient();
     }
@@ -17,6 +23,12 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
             callbackScope: this,
             loop: true
         });
+    }
+
+    update() {
+        if (Phaser.Math.Distance.Between(this.x, this.y, this.targetPosition.y, this.targetPosition.y) < 5) {
+            this.setVelocity(0);
+        }
     }
 
     updateDirection() {
@@ -34,9 +46,15 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     }
 
-    update() {
-        if (Phaser.Math.Distance.Between(this.x, this.y, this.targetPosition.y, this.targetPosition.y) < 5) {
-            this.setVelocity(0);
-        }
+    createAnimations() {
+        this.scene.anims.create({
+            key: 'enemy_idle',
+            frames: this.scene.anims.generateFrameNumbers('enemy1', {
+                start: 0,
+                end: 3
+            }),
+            frameRate: 8,
+            repeat: -1
+        });
     }
 }

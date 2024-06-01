@@ -26,9 +26,6 @@ export default class MainScene extends Phaser.Scene {
         this.punchHitbox.body.setSize(20, 20);
         this.punchHitbox.setVisible(false);
 
-        // this.enemy = new Enemy(this, 400, 200, 'enemy');
-        // this.physics.add.existing(this.enemy);
-
         this.enemies = this.physics.add.group();
         this.createEnemies();
 
@@ -107,11 +104,6 @@ export default class MainScene extends Phaser.Scene {
                 enemy.clearTint();
             }
         });
-
-        // this.time.delayedCall(1000, () => {
-        //     enemy.clearTint();
-        //     console.log("clear");
-        // }, [], this);
     }
 
     createEnemies(x, y) {
@@ -122,10 +114,8 @@ export default class MainScene extends Phaser.Scene {
         ];
 
         enemyPositions.forEach(pos => {
-            const enemy = new Enemy(this, pos.x, pos.y, 'enemy');
+            const enemy = new Enemy(this, pos.x, pos.y);
             this.enemies.add(enemy);
         })
     }
-
-
 }
